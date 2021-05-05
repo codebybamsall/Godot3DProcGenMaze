@@ -1,5 +1,5 @@
 func generate_maze():
-	var grid_steps = 22
+	var grid_steps = 22 #TOTAL SIZE OF MAZE
 	
 	var possible_directions = []
 	
@@ -88,7 +88,7 @@ func generate_maze():
 		
 		var random_hall_chance = rand_range(0,100)
 		
-		var hall_steps = randi()%15+5
+		var hall_steps = randi()%15+5 #SIZE OF THE HALLWAY
 		
 		
 		var i_current_pos = Vector3()
@@ -223,7 +223,7 @@ func generate_maze():
 		
 		var random_hall_chance = rand_range(0,100)
 		
-		var hall_steps = randi()%10+3
+		var hall_steps = randi()%10+3 #SIZE OF THE HALLWAY
 		
 		
 		var i_current_pos = Vector3()
