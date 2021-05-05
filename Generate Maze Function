@@ -1,0 +1,354 @@
+func generate_maze():
+	var grid_steps = 22
+	
+	var possible_directions = []
+	
+	var visited_cells = []
+	var hallway_visited_cells = []
+	var stray_hallway_visited_cells = []
+	
+	var current_pos = Vector3(0,0,0)
+	
+	#CREATE BASE PATHWAY
+	for i in range(0, grid_steps):
+		
+		if i == 0: #CREATING START POSITION
+			$GridMap.set_cell_item(current_pos.x, 0, current_pos.z, 0)
+			$GridMap.set_cell_item(current_pos.x, 0, current_pos.z +1, 0)
+			$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z, 0)
+			$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z +1, 0)
+			visited_cells.append(current_pos)
+			visited_cells.append(Vector3(current_pos.x, 0, current_pos.x +1))
+			visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z))
+			visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z +1))
+			current_pos.x +=1
+		
+		if i > 0:
+			
+			var direction = rand_range(0,2)
+			
+			if direction < 1 && i != grid_steps -1 && i != grid_steps -2: #NORTH
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z, 0)
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z +1, 0)
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z))
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z +1))
+				current_pos.x +=1
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z, 0)
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z +1, 0)
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z))
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z +1))
+				current_pos.x +=1
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z, 0)
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z +1, 0)
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z))
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z +1))
+				current_pos.x +=1
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z, 0)
+				$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z +1, 0)
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z))
+				visited_cells.append(Vector3(current_pos.x +1, 0, current_pos.z +1))
+				current_pos.x +=1
+			if direction > 1 && i != grid_steps -1 && i != grid_steps -2: #WEST
+				$GridMap.set_cell_item(current_pos.x, 0, current_pos.z -1, 0)
+				$GridMap.set_cell_item(current_pos.x -1, 0, current_pos.z -1, 0)
+				visited_cells.append(Vector3(current_pos.x, 0, current_pos.z -1))
+				visited_cells.append(Vector3(current_pos.x -1, 0, current_pos.z -1))
+				current_pos.z -=1
+				$GridMap.set_cell_item(current_pos.x, 0, current_pos.z -1, 0)
+				$GridMap.set_cell_item(current_pos.x -1, 0, current_pos.z -1, 0)
+				visited_cells.append(Vector3(current_pos.x, 0, current_pos.z -1))
+				visited_cells.append(Vector3(current_pos.x -1, 0, current_pos.z -1))
+				current_pos.z -=1
+				$GridMap.set_cell_item(current_pos.x, 0, current_pos.z -1, 0)
+				$GridMap.set_cell_item(current_pos.x -1, 0, current_pos.z -1, 0)
+				visited_cells.append(Vector3(current_pos.x, 0, current_pos.z -1))
+				visited_cells.append(Vector3(current_pos.x -1, 0, current_pos.z -1))
+				current_pos.z -=1
+				$GridMap.set_cell_item(current_pos.x, 0, current_pos.z -1, 0)
+				$GridMap.set_cell_item(current_pos.x -1, 0, current_pos.z -1, 0)
+				visited_cells.append(Vector3(current_pos.x, 0, current_pos.z -1))
+				visited_cells.append(Vector3(current_pos.x -1, 0, current_pos.z -1))
+				current_pos.z -=1
+			
+			#FOR CREATING END POINT
+			if i == grid_steps -1:
+				
+				if direction < 1: #NORTH
+					$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z, 1)
+					$GridMap.set_cell_item(current_pos.x +1, 0, current_pos.z +1, 1)
+				if direction > 1: #WEST
+					$GridMap.set_cell_item(current_pos.x, 0, current_pos.z -1, 1)
+					$GridMap.set_cell_item(current_pos.x -1, 0, current_pos.z -1, 1)
+					
+
+
+
+#CREATES STRAY HALLWAYS OFF OF BASE TRAIL
+	for i in visited_cells:
+		
+		var random_hall_chance = rand_range(0,100)
+		
+		var hall_steps = randi()%15+5
+		
+		
+		var i_current_pos = Vector3()
+		
+		
+		if random_hall_chance >= 70:
+			i_current_pos = i
+			
+			for index in hall_steps:
+				
+				possible_directions.clear()
+				
+				#FOR NORTH
+				var n1_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z)
+				var n2_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z +1)
+				var n3_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z)
+				var n4_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z +1) 
+				var n5_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z -1)
+				var n6_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z +2)
+				var n16_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z -1)
+				var n17_value = $GridMap.get_cell_item(i_current_pos.x +3, 0, i_current_pos.z)
+				var n18_value = $GridMap.get_cell_item(i_current_pos.x +3, 0, i_current_pos.z +1)
+				var n19_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z +2)
+				
+				#FOR WEST
+				var n7_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z -1)
+				var n8_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z -1)
+				var n9_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z -1)
+				var n10_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z -2)
+				var n11_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z -2)
+				var n12_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z -2)
+				var n13_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z -3)
+				var n14_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z -3)
+				var n15_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z -2)
+				
+				#FOR SOUTH
+				var n23_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1)
+				var n24_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z +2)
+				var n26_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z)
+				var n27_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z)
+				var n28_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z +1)
+				var n29_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z +2)
+				var n30_value = $GridMap.get_cell_item(i_current_pos.x -3, 0, i_current_pos.z)
+				var n31_value = $GridMap.get_cell_item(i_current_pos.x -3, 0, i_current_pos.z +1)
+				
+				#FOR EAST
+				var n20_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z +1)
+				var n21_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z +2)
+				var n22_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z +3)
+				var n25_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z +3)
+				
+				#CHECKS FOR NORTH
+				if n1_value == -1 && n2_value == -1 && n3_value == -1 && n4_value == -1 && n5_value == -1 && n6_value == -1 && n16_value == -1 && n17_value == -1 && n18_value == -1 && n19_value == -1:
+					possible_directions.append("north")
+				
+				#CHECKS FOR WEST
+				if n5_value == -1 && n7_value == -1 && n8_value == -1 && n9_value == -1 && n10_value == -1 && n11_value == -1 && n12_value == -1 && n13_value == -1 && n14_value == -1 && n15_value == -1:
+					possible_directions.append("west")
+				
+				#CHECKS FOR SOUTH
+				if n8_value == -1 && n9_value == -1 && n23_value == -1 && n24_value == -1 && n26_value == -1 && n27_value == -1 && n28_value == -1 && n29_value == -1 && n30_value == -1 && n31_value == -1:
+					possible_directions.append("south")
+				
+				#CHECKS FOR EAST
+				if n2_value == -1 && n6_value == -1 && n20_value == -1 && n21_value == -1 && n22_value == -1 && n23_value == -1 && n24_value == -1 && n25_value == -1 && n28_value == -1 && n29_value == -1:
+					possible_directions.append("east")
+				
+				#GETS RANDOM DIRECTION BASED ON POSSIBLE ONES
+				if possible_directions.size() > 0:
+					var rand_dir = possible_directions[rand_range(0, possible_directions.size())]
+					
+					#PLACING BLOCKS NORTH
+					if rand_dir == "north":
+						$GridMap.set_cell_item(i_current_pos.x +1, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x +1, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x +2, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x +2, 0, i_current_pos.z +1, 0)
+						hallway_visited_cells.append(Vector3(i_current_pos.x +1, 0, i_current_pos.z))
+						hallway_visited_cells.append(Vector3(i_current_pos.x +1, 0, i_current_pos.z +1))
+						hallway_visited_cells.append(Vector3(i_current_pos.x +2, 0, i_current_pos.z))
+						hallway_visited_cells.append(Vector3(i_current_pos.x +2, 0, i_current_pos.z +1))
+						#FOR EDGES
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z +1))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						i_current_pos.x +=2
+					
+					#PLACING BLOCKS WEST
+					if rand_dir == "west":
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z -1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z -1, 0)
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z -2, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z -2, 0)
+						hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z -1))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z -1))
+						hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z -2))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z -2))
+						#FOR EDGES
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						i_current_pos.z -= 2
+					
+					#PLACING BLOCKS SOUTH
+					if rand_dir == "south":
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x -2, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x -2, 0, i_current_pos.z +1, 0)
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -2, 0, i_current_pos.z))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -2, 0, i_current_pos.z +1))
+						i_current_pos.x -= 2
+					
+					#PLACING BLOCKS EAST
+					if rand_dir == "east":
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z +2, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +2, 0)
+						hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z +1))
+						hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z +2))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +2))
+						i_current_pos.z += 2
+	
+	#FOR CREATING HALLWAYS OFF OF THE OTHER HALLWAYS
+	for i in hallway_visited_cells:
+		
+		var random_hall_chance = rand_range(0,100)
+		
+		var hall_steps = randi()%10+3
+		
+		
+		var i_current_pos = Vector3()
+		
+		
+		if random_hall_chance >= 70:
+			i_current_pos = i
+			
+			for index in hall_steps:
+				
+				possible_directions.clear()
+				
+				#FOR NORTH
+				var n1_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z)
+				var n2_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z +1)
+				var n3_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z)
+				var n4_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z +1) 
+				var n5_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z -1)
+				var n6_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z +2)
+				var n16_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z -1)
+				var n17_value = $GridMap.get_cell_item(i_current_pos.x +3, 0, i_current_pos.z)
+				var n18_value = $GridMap.get_cell_item(i_current_pos.x +3, 0, i_current_pos.z +1)
+				var n19_value = $GridMap.get_cell_item(i_current_pos.x +2, 0, i_current_pos.z +2)
+
+				#FOR WEST
+				var n7_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z -1)
+				var n8_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z -1)
+				var n9_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z -1)
+				var n10_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z -2)
+				var n11_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z -2)
+				var n12_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z -2)
+				var n13_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z -3)
+				var n14_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z -3)
+				var n15_value = $GridMap.get_cell_item(i_current_pos.x +1, 0, i_current_pos.z -2)
+
+				#FOR SOUTH
+				var n23_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1)
+				var n24_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z +2)
+				var n26_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z)
+				var n27_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z)
+				var n28_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z +1)
+				var n29_value = $GridMap.get_cell_item(i_current_pos.x -2, 0, i_current_pos.z +2)
+				var n30_value = $GridMap.get_cell_item(i_current_pos.x -3, 0, i_current_pos.z)
+				var n31_value = $GridMap.get_cell_item(i_current_pos.x -3, 0, i_current_pos.z +1)
+
+				#FOR EAST
+				var n20_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z +1)
+				var n21_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z +2)
+				var n22_value = $GridMap.get_cell_item(i_current_pos.x, 0, i_current_pos.z +3)
+				var n25_value = $GridMap.get_cell_item(i_current_pos.x -1, 0, i_current_pos.z +3)
+				
+				#CHECKS FOR NORTH
+				if n1_value == -1 && n2_value == -1 && n3_value == -1 && n4_value == -1 && n5_value == -1 && n6_value == -1 && n16_value == -1 && n17_value == -1 && n18_value == -1 && n19_value == -1:
+					possible_directions.append("north")
+				
+				#CHECKS FOR WEST
+				if n5_value == -1 && n7_value == -1 && n8_value == -1 && n9_value == -1 && n10_value == -1 && n11_value == -1 && n12_value == -1 && n13_value == -1 && n14_value == -1 && n15_value == -1:
+					possible_directions.append("west")
+				
+				#CHECKS FOR SOUTH
+				if n8_value == -1 && n9_value == -1 && n23_value == -1 && n24_value == -1 && n26_value == -1 && n27_value == -1 && n28_value == -1 && n29_value == -1 && n30_value == -1 && n31_value == -1:
+					possible_directions.append("south")
+				
+				#CHECKS FOR EAST
+				if n2_value == -1 && n6_value == -1 && n20_value == -1 && n21_value == -1 && n22_value == -1 && n23_value == -1 && n24_value == -1 && n25_value == -1 && n28_value == -1 && n29_value == -1:
+					possible_directions.append("east")
+				
+				#GETS RANDOM DIRECTION BASED ON POSSIBLE ONES
+				if possible_directions.size() > 0:
+					var rand_dir = possible_directions[rand_range(0, possible_directions.size())]
+					
+					#PLACING BLOCKS NORTH
+					if rand_dir == "north":
+						$GridMap.set_cell_item(i_current_pos.x +1, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x +1, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x +2, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x +2, 0, i_current_pos.z +1, 0)
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x +1, 0, i_current_pos.z))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x +1, 0, i_current_pos.z +1))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x +2, 0, i_current_pos.z))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x +2, 0, i_current_pos.z +1))
+						#FOR EDGES
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z +1))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						i_current_pos.x +=2
+					
+					#PLACING BLOCKS WEST
+					if rand_dir == "west":
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z -1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z -1, 0)
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z -2, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z -2, 0)
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z -1))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z -1))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z -2))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z -2))
+						#FOR EDGES
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						i_current_pos.z -= 2
+					
+					#PLACING BLOCKS SOUTH
+					if rand_dir == "south":
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x -2, 0, i_current_pos.z, 0)
+						$GridMap.set_cell_item(i_current_pos.x -2, 0, i_current_pos.z +1, 0)
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -2, 0, i_current_pos.z))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -2, 0, i_current_pos.z +1))
+						i_current_pos.x -= 2
+					
+					#PLACING BLOCKS EAST
+					if rand_dir == "east":
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x, 0, i_current_pos.z +2, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +1, 0)
+						$GridMap.set_cell_item(i_current_pos.x -1, 0, i_current_pos.z +2, 0)
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z +1))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x, 0, i_current_pos.z +2))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +1))
+						stray_hallway_visited_cells.append(Vector3(i_current_pos.x -1, 0, i_current_pos.z +2))
+						i_current_pos.z += 2
